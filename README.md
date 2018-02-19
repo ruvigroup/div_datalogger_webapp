@@ -7,3 +7,7 @@ This repository contains all the web-pages designed for visualizing and recordin
 * Alexander Rasch
 * Gabriele Panero
 * Christian-Nils Boda (christian-nils.boda_AT_chalmers.se)
+
+# Work related
+
+This work has been carried out within the DIV project ([more info...](http://divproject.eu/)). This project is financed by Toyota Motors Europe and Autoliv. The present work has been carried out at Chalmers University (Sweden) in the Crash Analysis and Prevention research group ([more info...](https://www.chalmers.se/en/departments/m2/research/vehiclesafety/Pages/Accident-Prevention.aspx)).
