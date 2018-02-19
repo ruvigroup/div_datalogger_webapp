@@ -1,67 +1,26 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+
+<html lang="en">
 <head>
-<meta charset="utf-8" />
+    <meta charset="utf-8">
 
-<script type="text/javascript" src="http://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
-<script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+    <title>DIV datalogger</title>
+    <meta name="description" content="DIV datalogger homepage">
+    <meta name="author" content="Christian-Nils Åkerberg Boda">
 
-<script type="text/javascript" type="text/javascript">
-  // Connecting to ROS
-  // -----------------
-
-  var ros = new ROSLIB.Ros({
-    url : 'ws://localhost:9090'
-  });
-
-  ros.on('connection', function() {
-    console.log('Connected to websocket server.');
-  });
-
-  ros.on('error', function(error) {
-    console.log('Error connecting to websocket server: ', error);
-  });
-
-  ros.on('close', function() {
-    console.log('Connection to websocket server closed.');
-  });
-
-  // Publishing a Topic
-  // ------------------
-
-
-  // Subscribing to a Topic
-  // ----------------------
-
-  var listener = new ROSLIB.Topic({
-    ros : ros,
-    name : '/imu/data',
-    messageType : 'sensor_msgs/Imu'
-  });
-
-  listener.subscribe(function(message) {
-    console.log('Received message on ' + listener.name + ': ' + message.data);
-    listener.unsubscribe();
-  });
-
-  // Calling a service
-  // -----------------
-
-
-  // Getting and setting a param value
-  // ---------------------------------
-
-  ros.getParams(function(params) {
-    console.log(params);
-  });
-
-
-</script>
+    <link rel="stylesheet" href="css/styles.css">
+    <div> 
+        <a href="visualize-lidar.html" class="button"><span class="centerer"></span><span class='centered'>Visualize Data</span></a>
+        <a href="manage.html" class="button"><span class="centerer"></span><span class='centered'>Manage Data</span></a>
+    </div>
+    <div>
+    <h1>Description</h1>
+        <p>This application is used to 1) visualize data from the logger, and 2) to manage the data (start/stop recording, erase files, and transfer files).
+        </p>
+    </div>
 </head>
 
 <body>
-  <h1>Simple roslib Example</h1>
-  <p>Check your Web Console for output.</p>
+  <!--<script src="js/scripts.js"></script>-->
 </body>
 </html>
-
