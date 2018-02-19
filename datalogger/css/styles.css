@@ -4,7 +4,7 @@ html {
     overflow: hidden;
 }
 body {
-    background: #E1B661;   
+    background: #E1B661;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 16px;
     line-height: 1.5;
@@ -30,6 +30,7 @@ div {
 }
 
 a.button {
+    cursor: pointer;
     color: darkslategrey;
     background: #E1B661;
     margin-top: 1em;
@@ -59,11 +60,11 @@ a.button:hover {
 }
 
 #sensorDisplay {
-    
+
     margin: 0 auto;
     margin-top: 1em;
     height: 50%;
-    width: 100%;  
+    width: 100%;
 }
 
 #navigation {
@@ -107,4 +108,9 @@ i {
 .down {
     transform: rotate(45deg);
     -webkit-transform: rotate(45deg);
+}
+
+a.recordOn {
+    color: white;
+    background : lightgreen;
 }
