@@ -1,0 +1,38 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+
+    <title>DIV datalogger</title>
+    <meta name="description" content="DIV datalogger visualization">
+    <meta name="author" content="Christian-Nils Åkerberg Boda">
+
+    <link rel="stylesheet" href="css/styles.css">
+   
+</head>
+
+<body>
+     <div id="sensorDisplay"> 
+        
+    </div>
+    <div id="description">
+    <h1>Description</h1>
+        <p>
+        Some info from the sensor
+        </p>
+    </div>
+    <div id="navigation">
+        <a href="visualize-lidar.html"><div><i class="arrow left"></i></div></a><a href="index.html"><div><i class="arrow up"></i></div></a><div><i class="arrow right"></i></div>
+    </div>
+<script src="js/roslib.min.js"></script>
+    	<script src="js/three.min.js"></script>
+
+		<script src="js/renderers/Projector.js"></script>
+		<script src="js/renderers/CanvasRenderer.js"></script>
+
+        <script src="./js/sensor-imu.js"></script>
+</body>
+    
+</html>

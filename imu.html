@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="http://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+<script src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r71/three.min.js"></script>
+<script>
+
+// setup event handler to capture the orientation event and store the most recent data in a variable
+      var RECORD_ON ="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAASFBMVEUAAAAAAADMzMz/AABmZmaZmZnMAABmAACZAAAzAAAzMzP/MzPMZmaZMzPMMzP/MwD/////Zmb/ZgBmMzPMmZmZZmb/mQD/mZlxvxKlAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQffCBIMMyVTqZicAAACK0lEQVRIx43W63aDIAwA4KJJhVjrVtfu/d90kASIFlzzp5fDd5KAgJdLJwa8fB6YYojBXz4EQw1EgNPxAGDHqzpDBqDV0EN5DDoToIhagkSAOwb2DIEBRLEWINJf2DQspCQ7AwiUy0M69pEFyCR/xZCl4cTE/CgQtYoU2xZC2J6YiXNHA3ai4uApRwjaj+RBs+JWpKHLcrstiyAz3WjFUFJMk4/jf39+fqPyCdXJLmmwzi4L7+8a8avPhlwtzSQRcY0x3+9z+mSz8bSY0jRJWoEirtdxlM+IluczEXA7In+FbVm8jJ9jqIpmC2nBSjc6XXFZwvS83XwC4/wdI5pRDLczUE6TSJoPisRrDhNCkqFSmTY/pN6ZpIo05pguGZk1qawSKL3PxnznNIGHkDSjK1/q4tZNnlFI0CdNCeiTooRjXVfTTV5PJnggWTxejzNCDfJ6PdYWGd6zXHOWR7ewXi/jOrYJ8PbCvFH8cSGFlBmjQoZC/Dup68LbjAmWR39fWaOu1MRFCNg0rWesrCQTU1njuaxPZW1lX1neYRXwvgy1rkLQGN2WZVOWJHFPDZBPMUTXMVZAvZ+gnolqfBlvT6VEymGJelzryedL7M4+MFdTvIwAnDn8JnPCupbgO7KaeijHLz1xNKzseBVweTPketEQQgDagLAhssFWIl6P5j3OpK5QzgB8lXVufiFoFkl/n71fZIPlDeYsxa64+l7yH1BFUAv6ANgZ7wz/A295IO9de7kCAAAAAElFTkSuQmCC";
+      var RECORD_OFF = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAFVBMVEVvcm0AAAAzMzNmZmbMzMyZmZn///8pcdebAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQffCBINBR5qfIr6AAABv0lEQVQ4y22UQZaCMAyGffo8QED3Q9E9EDmAYzrrgZIbzJv7H2GStFLLmA22H/+fWNLsdi/hd2+DeSHP/A6Qhg9duX/AhVJskAGPoyLsNmACjVrQkMFe3u0hxUKPj5W0BqoWh0YeSxbtb2o1xvyNGPqnCMkLYPr6/SEOABcKqeKbF8mV2UE1KgHysbyDStaQTCKKR8GpYHDoIJVuJ3hcyJZVK1ZanFbuv5XQIypaRBycoupkdkx3kzhBg3NOMl2j3UJ9LS+6NRCufSLyq9KtqBFVPWmi4+KBoUbZkQoUiMHniZTcYYYqmylpjUgBdyVohu2s5HxOpDdiSWbNA3UlZR/lBBqw/CYyIkenRL9ZqjfVFgln0vJckiaTkIkvNYXba57WZRLku03xPHPo2sj9DamVLFuiFZ2pE2IfbkNOQnY32hBdXrR7RoLSzhrhYWQqRNYj/NB281MhsrZiVGJtuYpiw7E16RiajGIrYrxdGHooo0ZMdxQ3BJ8XErHfSrrnxcamlOB65Qu/K+bbLWTOXrxKDKU/JU3I/DoQDsjMgwmYyyFyGNkGj4ykgOXgET8bSf+AqAZ1DIhvBhwivu7/ATYxlvOTH50RAAAAAElFTkSuQmCC";
+
+var alpha, beta, gamma;
+var imuTimer;
+
+// setup connection to the ROS server and prepare the topic
+  var ros = new ROSLIB.Ros({
+    url : 'ws://localhost:9090'
+  });
+
+  ros.on('connection', function() { console.log('Connected to websocket server.');});
+
+  ros.on('error', function(error) { console.log('Error connecting to websocket server: ', error); window.alert('Error connecting to websocket server'); });
+
+  ros.on('close', function() { console.log('Connection to websocket server closed.');});
+
+  var imuTopic = new ROSLIB.Topic({
+    ros : ros,
+    name : '/imu/data',
+    messageType : 'sensor_msgs/Imu'
+  });
+
+</script>
+</head>
+
+<!-- declare interface and the canvases that will display the video and the still shots -->
+<body>
+ <video style="display: none" autoplay id="video"></video>
+ <canvas style="display: none" id="canvas"></canvas>
+ <button id="startstop" style="outline-width: 0; background-color: transparent; border: none"><img id="startstopicon" src=""/></button>
+
+<script>
+
+      //document.getElementById('startstopicon').setAttribute('src', RECORD_OFF);
+
+
+ function imusnapshot() {
+     var beta_radian = ((beta + 360) / 360 * 2 * Math.PI) % (2 * Math.PI);
+     var gamma_radian = ((gamma + 360) / 360 * 2 * Math.PI) % (2 * Math.PI);
+     var alpha_radian = ((alpha + 360) / 360 * 2 * Math.PI) % (2 * Math.PI);
+     var eurlerpose = new THREE.Euler(beta_radian, gamma_radian, alpha_radian);
+     var quaternionpose = new THREE.Quaternion;
+     quaternionpose.setFromEuler(eurlerpose);
+
+     //document.getElementById("demo").innerHTML = imuTopic;//'Beta: ' + beta_radian + '\nGamma: ' + gamma_radian + '\nAlpha: ' + alpha_radian;
+
+     /*var imuMessage = new ROSLIB.Message({
+        header : {
+           frame_id : "world"
+        },
+        orientation : {
+           x : quaternionpose.x,
+           y : quaternionpose.y,
+           z : quaternionpose.z,
+           w : quaternionpose.w
+        },
+        orientation_covariance : [0,0,0,0,0,0,0,0,0],
+        angular_velocity : {
+           x : vbeta,
+           y : vgamma,
+           z : valpha,
+        },
+        angular_velocity_covariance  : [0,0,0,0,0,0,0,0,0],
+        linear_acceleration : {
+           x : x,
+           y : y,
+           z : z,
+        },
+        linear_acceleration_covariance  : [0,0,0,0,0,0,0,0,0],
+     });
+
+     imuTopic.publish(imuMessage);*/
+  }
+// turning on and off the timer that triggers sending pictures and imu information several times a second
+
+  startstopicon.addEventListener('click', function(ev){
+
+	  imuTopic.subscribe(function(message) {
+                if (message.angular_velocity_covariance[0] != -1) {
+                    document.getElementById("demo").innerHTML = message.linear_acceleration.z;
+                }
+            });
+          imuTimer = setInterval(function(){
+                imusnapshot();
+           }, 500);       // publish an IMU message 10 times per second
+    	  document.getElementById('startstopicon').setAttribute('src', RECORD_ON);
+
+  }, false);
+</script>
+<p id="demo"></p>
+</body>
+</html>
