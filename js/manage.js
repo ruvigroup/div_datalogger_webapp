@@ -64,7 +64,7 @@ function toggle(){
 // set record on, starts recording via the service and change the recordButton class if the request succeeded
 function setRecordOn(recordButton){
   UserCMDService.callService(startRecordRequest, function(response){
-    if (response.response_msg == SUCCESS){
+    if (response.msg_id == SUCCESS){
       setRecordOnStyle(recordButton);
     }
   });
@@ -78,7 +78,7 @@ function setRecordOnStyle(recordButton){
 // set record on, starts recording via the service and change the recordButton class if the request succeeded
 function setRecordOff(recordButton){
   UserCMDService.callService(stopRecordRequest, function(response){
-    if (response.response_msg == SUCCESS){
+    if (response.msg_id == SUCCESS){
       setRecordOffStyle(recordButton);
     }
   });
@@ -106,7 +106,7 @@ function setRecordingTime(msecs){
 ros = connectToROS();
 UserCMDService = connectToService('/user_cmd','div_datalogger/UserCMD');
 UserCMDService.callService(statusRequest, function(response){
-  console.log(response.rec_time + ' ' + response.response_msg + ' ' + response.status_id);
+  console.log(response.rec_time + ' ' + response.msg_id + ' ' + response.status_id);
   switch (response.status_id){
     case STATUS_RECORD_ON:
     setRecordOnStyle(recordButton);
