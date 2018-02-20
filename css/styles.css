@@ -114,3 +114,8 @@ a.recordOn {
     color: white;
     background : lightgreen;
 }
+
+#shutdownButton:hover {
+  background: crimson;
+  color : white;
+}
