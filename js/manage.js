@@ -31,6 +31,9 @@ var shutdownRequest = new ROSLIB.ServiceRequest({
   request_id : REQ_SHUTDOWN
 });
 
+var logBox = document.getElementById("logbox");
+var time = new Date().getTime();
+
 // hasClass function copied from jQuery
 function hasClass(element, selector){
   var className = " " + selector + " ";
@@ -111,6 +114,41 @@ function setRecordingTime(msecs){
   }
 }
 
+function subscribeToLog() {
+	rosinfo = connectToTopic('/rosout', 'rosgraph_msgs/Log', 100);
+	rosinfo.subscribe(function(message) {
+		if (new Date().getTime() - time > 100){
+			showLog(message);
+			time = new Date().getTime();
+		}
+	});
+}
+
+function getHtmlMessage(message){
+	toffset = (new Date()).getTimezoneOffset() * 60000;
+	timeStamp = (new Date(Date.now() - toffset)).toISOString().substr(11, 8);
+	
+	return '<span style="color:white">[' + timeStamp + ']: </span> <span class="logLevel' + message.level + '"><b>' + message.name + '</b>: ' + message.msg + '</span><br>';
+}
+function showLog(message){
+    var div = document.createElement('div');
+    div.innerHTML = getHtmlMessage(message);
+	
+    div.className = 'logMessage';
+
+	// Add child div and scroll down if bar is scrolled down
+	scrollDown = false;
+	if (logBox.scrollHeight - logBox.scrollTop == logBox.clientHeight){
+    	scrollDown = true;
+	}
+
+	logBox.appendChild(div);
+
+	if (scrollDown){
+		logBox.scrollTop = logBox.scrollHeight;
+	}
+}
+
 ros = connectToROS();
 UserCMDService = connectToService('/user_cmd','div_datalogger/UserCMD');
 UserCMDService.callService(statusRequest, function(response){
@@ -127,5 +165,7 @@ UserCMDService.callService(statusRequest, function(response){
   }
 });
 
+
 recordButton.onclick = function(){toggle()};
 shutdownButton.onclick = function(){shutdownConfirmation()};
+subscribeToLog();

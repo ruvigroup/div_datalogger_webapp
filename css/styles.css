@@ -83,6 +83,35 @@ a.button:hover {
     text-align: center;
 }
 
+#logbox {
+ margin-top: 20px;
+ margin-bottom: 20px;
+ background-color: black;
+ height: 50%;
+ display: inline-block;
+ border-style: solid; 
+ box-sizing: border-box; 
+ padding: 5px; 
+ width: 100%; 
+ overflow-x: hidden;
+ overflow-y: scroll;
+}
+#logbox div {
+    border-style: solid;
+    border-color: black;
+    border-width: thick;
+    padding: 0px;
+    display: inline-block;
+
+    height: 100px;
+    width: 90%;
+    text-align: left;
+}
+
+#logbox div.logMessage {
+    height: auto;
+}
+
 i {
     border: solid white;
     border-width: 0 3px 3px 0;
@@ -118,4 +147,17 @@ a.recordOn {
 #shutdownButton:hover {
   background: crimson;
   color : white;
+}
+
+.logLevel2 {
+color:#39FF14;
+}
+.logLevel4 {
+color: orange;
+}
+.logLevel8 {
+color: crimson;
+}
+.logLevel1, .logLevel16 {
+color: white;
 }
