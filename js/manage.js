@@ -150,7 +150,7 @@ function showLog(message){
 }
 
 ros = connectToROS();
-UserCMDService = connectToService('/user_cmd','div_datalogger/UserCMD');
+UserCMDService = connectToService('/user_cmd','div_datalogger/UserCmd');
 UserCMDService.callService(statusRequest, function(response){
   switch (response.state_id){
     case STATUS_RECORD_ON:
