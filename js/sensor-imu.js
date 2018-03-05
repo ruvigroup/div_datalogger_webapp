@@ -2,51 +2,68 @@ var container;
 
 var camera, scene, renderer;
 var ros, imuTopic;
-var cube;
+var cube, lidar;
 var container = document.getElementById('sensorDisplay');
 var windowHalfX = container.clientWidth / 2;
 var windowHalfY = container.clientHeight / 2;
 var time = new Date().getTime();
+if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 init();
-render();
+animate();
 
 function init() {
 
-	camera = new THREE.PerspectiveCamera( 70, container.clientWidth / container.clientHeight, 1, 1000 );
-	camera.position.y = 150;
-	camera.position.z = 500;
+	camera = new THREE.PerspectiveCamera( 60, windowHalfX / windowHalfY, 0.1, 2000 );
+	camera.position.set( 200, 200, 200 );
+	camera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
 
 	scene = new THREE.Scene();
 	scene.background = new THREE.Color( 0xE1B661 );
 
-	// Cube
+	// loading manager
 
-	var geometry = new THREE.BoxGeometry( 200, 200, 200 );
+	var loadingManager = new THREE.LoadingManager( function() {
+		dataloggerMesh = datalogger.children[0];
+		var material = new THREE.MeshPhongMaterial( { color: 0xff5533, specular: 0x111111, shininess: 200 } );
+		dataloggerMesh.material = material;
+		// fix the "missing faces" by making sure that the faces are visible both sides.
+	//  lidarMesh.material.side = THREE.DoubleSide;
+		scene.add( dataloggerMesh );
+	} );
 
-	for ( var i = 0; i < geometry.faces.length; i += 2 ) {
+	// collada
 
-		var hex = Math.random() * 0xffffff;
-		geometry.faces[ i ].color.setHex( hex );
-		geometry.faces[ i + 1 ].color.setHex( hex );
+	var loader = new THREE.ColladaLoader( loadingManager );
+	loader.load( './3dmodels/DataLogger.dae', function ( collada ) {
 
-	}
+		datalogger = collada.scene;
 
-	var material = new THREE.MeshBasicMaterial( { vertexColors: THREE.FaceColors, overdraw: 0.5 } );
+	} );
 
-	cube = new THREE.Mesh( geometry, material );
-	cube.position.y = 150;
-	scene.add( cube );
+	//
 
+	var ambientLight = new THREE.AmbientLight( 0xcccccc, .2 );
+	scene.add( ambientLight );
 
-	renderer = new THREE.CanvasRenderer();
+	var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
+	directionalLight.position.set( 100, 100, 0 ).normalize();
+	scene.add( directionalLight );
+
+	//
+
+	renderer = new THREE.WebGLRenderer();
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( container.clientWidth, container.clientHeight );
 	container.appendChild( renderer.domElement );
 
 	//
 
+
+	//
+
 	window.addEventListener( 'resize', onWindowResize, false );
 
+	// connect to the websocket to update the model's orientation
 	ros = connectToROS();
 	subscribeToIMU();
 
