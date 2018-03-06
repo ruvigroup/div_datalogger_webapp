@@ -14,11 +14,14 @@ animate();
 function init() {
 
 	camera = new THREE.PerspectiveCamera( 60, windowHalfX / windowHalfY, 0.1, 2000 );
-	camera.position.set( 200, 200, 200 );
+	camera.position.set( 160, 160, 160 );
 	camera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
 
 	scene = new THREE.Scene();
 	scene.background = new THREE.Color( 0xE1B661 );
+
+	var axesHelper = new THREE.AxesHelper(150);
+	scene.add(axesHelper);
 
 	// loading manager
 
@@ -34,7 +37,7 @@ function init() {
 	// collada
 
 	var loader = new THREE.ColladaLoader( loadingManager );
-	loader.load( './3dmodels/DataLogger.dae', function ( collada ) {
+	loader.load( './3dmodels/DataLogger_render.dae', function ( collada ) {
 
 		datalogger = collada.scene;
 
@@ -75,7 +78,7 @@ function subscribeToIMU(){
 	imuTopic = connectToTopic('/imu/data', 'sensor_msgs/Imu', 100);
 	imuTopic.subscribe(function(message) {
 		if (new Date().getTime() - time > 10){
-			setCubeOrientation(message.orientation);
+			setDataloggerOrientation(message.orientation);
 			render();
 			time = new Date().getTime();
 		}
@@ -101,11 +104,17 @@ function animate() {
 	render();
 
 }
-function setCubeOrientation(data){
-	cube.quaternion.x = data.x;
-	cube.quaternion.y = data.y;
-	cube.quaternion.z = data.z;
-	cube.quaternion.w = data.w;
+function setDataloggerOrientation(data){
+	if(dataloggerMesh !== undefined) {
+		angles = new THREE.Euler().setFromQuaternion(new THREE.Quaternion(data.x, data.y, data.z, data.w).normalize());
+		dataloggerMesh.rotation.x = Math.PI/2 - angles.x;
+		dataloggerMesh.rotation.y = angles.y;
+		dataloggerMesh.rotation.z = - angles.z;
+		
+		document.getElementById('rot_x').innerHTML = Math.round(180 / Math.PI * angles.x * 100)/100;
+		document.getElementById('rot_y').innerHTML = Math.round(180 / Math.PI * angles.z * 100)/100;
+		document.getElementById('rot_z').innerHTML = Math.round(180 / Math.PI * -angles.y * 100)/100;
+	}
 }
 
 function render() {
